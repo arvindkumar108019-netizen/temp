@@ -16,7 +16,12 @@
     </div>
 
     <script>
-        // यहाँ हम अपना जावास्क्रिप्ट कोड लिखेंगे
+        // 1. Supabase क्रेडेंशियल्स सेट करें
+const SUPABASE_URL = 'https://wddeznngcuhlgvcrtgmw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_nmOzgpDQ1AG_kbIpshs7AA_fISGPsHy'; // यहाँ अपनी असली की (key) डालें
+
+// 2. Supabase क्लाइंट बनाएं
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 
 </body>
