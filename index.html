@@ -22,6 +22,49 @@ const SUPABASE_ANON_KEY = 'sb_publishable_nmOzgpDQ1AG_kbIpshs7AA_fISGPsHy'; // �
 
 // 2. Supabase क्लाइंट बनाएं
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+        // 3. Supabase से डेटा फेच करने और स्क्रीन पर दिखाने का फ़ंक्शन
+async function fetchProjects() {
+    const { data: projects, error } = await supabase
+        .from('Project') // आपकी टेबल का नाम
+        .select('*');    // सभी कॉलम्स का डेटा लाने के लिए
+
+    if (error) {
+        console.error('डेटा लाने में गड़बड़ हुई:', error);
+        return;
+    }
+
+    // HTML कंटेनर को खाली करें और नया डेटा जोड़ें
+    const container = document.getElementById('projects-container');
+    container.innerHTML = ''; 
+
+    projects.forEach(project => {
+        const projectCard = document.createElement('div');
+        projectCard.className = 'project-card';
+        projectCard.innerHTML = `
+            <h3>${project.title}</h3>
+            <img src="${project.image_url}" alt="${project.title}" style="max-width: 300px; border-radius: 8px;">
+        `;
+        container.appendChild(projectCard);
+    });
+}
+
+// 4. रियल-टाइम अपडेट्स (Realtime Listeners) सेट करें
+supabase
+    .channel('schema-db-changes')
+    .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Project' },
+        (payload) => {
+            console.log('डेटाबेस में बदलाव हुआ!', payload);
+            fetchProjects(); // बदलाव होते ही डेटा फिर से लोड करें
+        }
+    )
+    .subscribe();
+
+// पेज लोड होते ही पहली बार डेटा फेच करें
+fetchProjects();
     </script>
 
 </body>
